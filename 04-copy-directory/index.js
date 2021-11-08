@@ -1,10 +1,11 @@
 const path = require('path');
 const promises = require('fs/promises');
 
-let folderOld = path.join(__dirname, 'files');
-let folderCopy = path.join(__dirname, 'files-copy');
+let assetsFolder, assetsDist;
+assetsFolder = path.join(__dirname, 'files');
+assetsDist = path.join(__dirname, 'files-copy');
 
-async function copy(){
+async function copy(folderOld, folderCopy){
   await promises.mkdir(folderCopy, {recursive: true});
   let files = await promises.readdir(folderOld);
   for(let i = 0; i < files.length; i ++){
@@ -12,7 +13,12 @@ async function copy(){
     let fileCopy = path.join(folderCopy, files[i]);
     await promises.copyFile(fileOld, fileCopy);
   }
-  console.log('Copy - Success.');
 }
 
-copy();
+async function copyFiles(){
+  await promises.rmdir(assetsDist, { recursive: true });
+  await promises.mkdir(assetsDist, { recursive: true });
+  copy(assetsFolder, assetsDist);
+}
+
+copyFiles();
